@@ -1,4 +1,4 @@
-# ProcessVue
+<img width="120" src="https://raw.githubusercontent.com/microcipcip/processvue/master/site/templates/client/src/assets/logo.png">
 
 ProcessVue is a boilerplate for getting started with ProcessWire as a headless CMS for VueJS SPAs.
 
