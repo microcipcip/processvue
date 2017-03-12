@@ -18,11 +18,11 @@ ProcessVue is a boilerplate for getting started with ProcessWire 3.0 as a headle
 ## Installation
 
 1. Extract this repository in your local machine
-2. Install `processvue_pw.sql` database included in the root of this repo
-3. Change `site/config.php` with your local settings
+2. Install `processvue_pw.sql` database which is included on the root of this repo
+3. Update `site/config.php` with your local machine settings
+4. Update `site/templates/client/config/index.js` proxyTable with the right domain name
 4. Install npm packages from `site/templates/client` by running `npm i` 
-5. Run webpack dev server by running `npm run dev`
-6. Compile for deployment by running `npm run build`
+5. Run webpack dev server by running `npm run dev`, or compile all assets with `npm run build`
 
 ## Processwire Login
 
