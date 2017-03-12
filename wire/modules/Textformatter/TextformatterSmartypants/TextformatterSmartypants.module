@@ -1,0 +1,114 @@
+<?php namespace ProcessWire;
+
+/**
+ * ProcessWire Smartypants Typographer Textformatter
+ *
+ * See: http://daringfireball.net/projects/smartypants/ 
+ * See: https://github.com/michelf/php-smartypants'
+ * 
+ * ProcessWire 3.x, Copyright 2016 by Ryan Cramer
+ * https://processwire.com
+ * 
+ * @property int $useUTF8
+ *
+ */
+
+class TextformatterSmartypants extends Textformatter implements ConfigurableModule {
+
+	public static function getModuleInfo() {
+		return array(
+			'title' => 'SmartyPants Typographer', 
+			'version' => 171, 
+			'summary' => "Smart typography for web sites, by Michel Fortin based on SmartyPants by John Gruber. If combined with Markdown, it should be applied AFTER Markdown.", 
+			'url' => 'https://github.com/michelf/php-smartypants'
+		); 
+	}
+	
+	/**
+	 * Replacements when useUTF8 aggressive mode is active
+	 * 
+	 * @var array
+	 * 
+	 */
+	protected static $replacementsUTF8 = array(
+		'&#8212;' => '—', // em dash
+		'&#8211;' => '–', // en dash
+		'&#8230;' => '…', // ellipsis
+		'&#8220;' => '“', // open double quote
+		'&#8221;' => '”', // open double quote
+		'&#8222;' => '„', // low double open quote
+		'&#171;' => '«', // guillemets <<
+		'&#187;' => '»', // guillemets >>
+	);
+	
+	public function __construct() {
+		$this->set('useUTF8', 0);
+		parent::__construct();
+	}
+
+	/**
+	 * Textformatter format 
+	 * 
+	 * @param string $str
+	 * 
+	 */
+	public function format(&$str) {
+		$str = self::typographer($str, (int) $this->useUTF8);
+	}
+
+	/**
+	 * Format string with SmartyPants Typographer
+	 * 
+	 * The SmartyPants classes do a lot of expensive setup in their constructor, so we keep a static
+	 * version of the parser so that hopefully we don't need to construct more than one parser per
+	 * request even if lots of format() calls are made. 
+	 * 
+	 * @param string $str
+	 * @param int|bool $useUTF8 Specify 1 to use some UTF-8 replacements, 2 for all UTF-8 replacements, or 0 for none.
+	 * @return string
+	 * 
+	 */
+	static public function typographer($str, $useUTF8 = 0) {
+		
+		static $parser = null;
+		static $parserUseUTF8 = 0;
+		
+		$useUTF8 = (int) $useUTF8;
+		
+		if(is_null($parser) || $parserUseUTF8 !== $useUTF8) {
+			require_once(dirname(__FILE__) . "/Michelf/SmartyPantsTypographer.inc.php");
+			$parser = new \Michelf\SmartyPantsTypographer(\Michelf\SmartyPants::ATTR_LONG_EM_DASH_SHORT_EN);
+			if($useUTF8) $parser->decodeEntitiesInConfiguration();
+			$parserUseUTF8 = $useUTF8;
+		}
+		
+		$str = $parser->transform($str);
+
+		if($useUTF8 === 2) {
+			$str = str_replace(array_keys(self::$replacementsUTF8), array_values(self::$replacementsUTF8), $str);
+		}
+		
+		return $str; 
+	}
+
+	/**
+	 * Module config
+	 * 
+	 * @param InputfieldWrapper $inputfields
+	 * 
+	 */
+	public function getModuleConfigInputfields(InputfieldWrapper $inputfields) {
+		$f = $this->wire('modules')->get('InputfieldRadios');
+		$f->attr('name', 'useUTF8');
+		$f->label = $this->_('Use UTF-8 characters for replacements rather than HTML entities?');
+		$f->description = $this->_('The default behavior for SmartyPants is to add/update characters using HTML entities.') . ' ';
+		$f->description .= $this->_('If you observe double-encoding issues, you may want to have it use UTF-8 replacements instead.');
+		$f->addOption(0, $this->_('No (default)'));
+		$f->addOption(1, $this->_('Yes (some)'));
+		$f->addOption(2, $this->_('Yes (all)') . '*');
+		$f->attr('value', (int) $this->useUTF8);
+		$f->notes = '*' . $this->_('Note that the “all” option will cause decode the following characters (when entity encoded) even if they were not inserted by SmartyPants:');
+		$f->notes .= " " . implode(' ', array_keys(self::$replacementsUTF8));
+		$inputfields->add($f);
+	}
+}
