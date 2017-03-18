@@ -1,4 +1,4 @@
-<img width="350" src="https://raw.githubusercontent.com/microcipcip/processvue/master/templates/client/src/assets/logo.png">
+<img width="350" src="https://raw.githubusercontent.com/microcipcip/processvue/master/site-processvue/templates/client/src/assets/logo.png">
 
 # ProcessWire Site Profile for Vue 2.0
 
