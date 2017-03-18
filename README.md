@@ -25,10 +25,14 @@ Load the URL to your ProcessWire installation in your browser to initiate the in
 
 ## To Install npm packages
 
-1. Update `site/templates/client/config/index.js` proxyTable with the right domain name
+1. Update `site/templates/client/config/index.js` proxyTable with your domain name
 2. Install npm packages from `site/templates/client` by running `npm i` 
 3. Run webpack dev server by running `npm run dev`, or compile all assets with `npm run build`
 
 #### Note
 
 If your website is in localhost (for example http://localhost/processvue) and not in a virtual server (i.e. http://processvue.localdev), with the command `npm run build` the website may not be visible because the js files point to the wrong path, so you may need a proper virtual server to browse the site correctly. However, the `npm run dev` command should work fine without setting up a virtual server.
+
+## Support
+
+Check [this ProcessWire forum thread](https://processwire.com/talk/topic/15790-vue-20-boilerplate-for-processwire-30/) for further details about how this site profile works. 
